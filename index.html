@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="墾丁之旅">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-orientations" content="portrait">
+<meta name="application-name" content="墾丁之旅">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+
+<meta name="theme-color" content="#0d1b2a">
+<title>五甲→墾丁 福安宮之旅</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a1622;--bg2:#0d1b2a;--bg3:#152538;
+  --card:#122236;--card-hover:#1a3049;
+  --accent:#4ecdc4;--accent2:#f7b733;--accent3:#ff7e5f;
+  --text:#e8f0f2;--text2:#9fb3bf;--text3:#5f7686;
+  --green:#2ecc71;
+  --radius:16px;--radius-sm:10px;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(80px + env(safe-area-inset-bottom));padding-top:env(safe-area-inset-top,0)}
+.header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,var(--bg2) 0%,#0a1a28 100%);border-bottom:1px solid rgba(78,205,196,.15);padding:calc(16px + env(safe-area-inset-top)) 20px 16px;backdrop-filter:blur(20px)}
+.header h1{font-size:1.25rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .subtitle{font-size:.75rem;color:var(--text2);margin-top:2px}
+.day-tabs{display:flex;gap:8px;padding:12px 20px;position:sticky;top:76px;z-index:90;background:var(--bg)}
+.day-tab{flex:1;padding:10px 0;border-radius:var(--radius-sm);text-align:center;font-weight:700;font-size:.9rem;border:2px solid var(--bg3);color:var(--text2);cursor:pointer;transition:all .25s}
+.day-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(78,205,196,.08)}
+.day-tab .tab-sub{font-size:.65rem;font-weight:400;margin-top:2px;opacity:.7}
+.route-info{margin:0 20px 8px;padding:12px 16px;background:linear-gradient(135deg,rgba(78,205,196,.08),rgba(247,183,51,.08));border:1px solid rgba(78,205,196,.15);border-radius:var(--radius-sm);display:flex;justify-content:space-around;font-size:.76rem;color:var(--text2)}
+.route-info .ri-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.route-info .ri-val{font-size:1rem;font-weight:700;color:var(--accent2)}
+.section{padding:8px 20px}
+.section-label{font-size:.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:12px 0 8px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--bg3)}
+.stop-card{background:var(--card);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;border:1px solid rgba(255,255,255,.04)}
+.stop-card:active{transform:scale(.985)}
+.stop-main{display:flex;align-items:stretch;min-height:78px}
+.stop-index{width:44px;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.stop-index::after{content:'';position:absolute;right:0;top:12px;bottom:12px;width:1px;background:rgba(255,255,255,.06)}
+.idx-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900}
+.stop-body{flex:1;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.stop-name{font-size:.95rem;font-weight:700;line-height:1.3}
+.stop-meta{font-size:.7rem;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.stop-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:500}
+.tag-meal{background:rgba(255,126,95,.15);color:var(--accent3)}
+.tag-spot{background:rgba(78,205,196,.12);color:var(--accent)}
+.tag-stay{background:rgba(247,183,51,.15);color:var(--accent2)}
+.tag-home{background:rgba(46,204,113,.12);color:var(--green)}
+.time-chip{display:inline-flex;align-items:center;gap:2px;padding:2px 7px;border-radius:6px;font-size:.63rem;background:var(--bg3);color:var(--text2);font-weight:600}
+.time-chip.arr{color:var(--accent2)}
+.time-chip.stay{color:var(--accent)}
+.stop-actions{display:flex;align-items:center;padding-right:4px}
+.act-btn{width:46px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;cursor:pointer;color:var(--text2);font-size:.58rem}
+.act-btn svg{width:19px;height:19px}
+.act-btn.nav-btn:active{color:var(--accent2)}
+.act-btn.map-btn:active{color:var(--accent)}
+.stop-expand{display:none;padding:0 14px 12px 58px}
+.stop-expand.show{display:block}
+.option-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;margin-top:6px;background:var(--bg2);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.04)}
+.option-item .oi-name{font-size:.85rem;font-weight:500}
+.oi-actions{display:flex;gap:4px}
+.oi-btn{width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2)}
+.oi-btn:active{background:var(--accent2);color:var(--bg);border-color:var(--accent2)}
+.oi-btn svg{width:16px;height:16px}
+.tips-box{margin:12px 20px 20px;padding:14px 16px;background:linear-gradient(135deg,rgba(247,183,51,.06),rgba(255,126,95,.04));border:1px solid rgba(247,183,51,.12);border-radius:var(--radius)}
+.tips-title{font-size:.78rem;font-weight:700;color:var(--accent2);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tips-text{font-size:.75rem;color:var(--text2);line-height:1.65}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:200;backdrop-filter:blur(20px)}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:12px;cursor:pointer;color:var(--text3);font-size:.65rem;font-weight:500}
+.bnav-item.active{color:var(--accent2)}
+.bnav-item svg{width:22px;height:22px}
+.overview-panel{display:none;padding:20px}
+.overview-panel.show{display:block}
+.ov-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,.04)}
+.ov-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px;color:var(--accent2)}
+.ov-card p{font-size:.8rem;color:var(--text2);line-height:1.65}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--bg3)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>五甲→墾丁 福安宮之旅</h1>
+  <div class="subtitle">白牌機車 2天1夜 · 10/03-10/04</div>
+</header>
+
+<div class="day-tabs" id="dayTabs">
+  <div class="day-tab active" onclick="switchDay(1)"><div>DAY 1 (10/03)</div><div class="tab-sub">五甲→墾丁</div></div>
+  <div class="day-tab" onclick="switchDay(2)"><div>DAY 2 (10/04)</div><div class="tab-sub">車城→佳冬→五甲</div></div>
+</div>
+
+<!-- ===== DAY 1 ===== -->
+<div class="day-content" id="day1">
+<div class="route-info">
+  <div class="ri-item"><span class="ri-val">~140km</span>預估里程</div>
+  <div class="ri-item"><span class="ri-val">7 站</span>停靠點</div>
+  <div class="ri-item"><span class="ri-val">07:00出發</span>建議時間</div>
+</div>
+
+<div class="section">
+  <div class="section-label">早餐</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(255,126,95,.15);color:var(--accent3)">1</div></div>
+    <div class="stop-body"><div class="stop-name">海豚灣（枋山海景7-11）</div>
+      <div class="stop-meta"><span class="stop-tag tag-meal">🍳 早餐/小憩</span><span class="time-chip">🛵 1h50m</span><span class="time-chip arr">⏰ 08:50抵達</span><span class="time-chip stay">⏱ 停留20分</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(22.2444,120.6629)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/AcLKTrJXeea1TRks7')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+</div>
+
+<div class="section">
+  <div class="section-label">景點</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(78,205,196,.14);color:var(--accent)">2</div></div>
+    <div class="stop-body"><div class="stop-name">雙流國家森林遊樂區</div>
+      <div class="stop-meta"><span class="stop-tag tag-spot">🌲 景點</span><span class="time-chip">🛵 40min</span><span class="time-chip arr">⏰ 09:50抵達</span><span class="time-chip stay">⏱ 停留1h40m</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(22.2161,120.7996)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/nLu3c4eVLWiGzFZr8')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+</div>
+
+<div class="section">
+  <div class="section-label">午餐（雙流道之驛 / Vuvu的家，二選一）</div>
+  <div class="stop-card">
+    <div class="stop-main" onclick="toggleExpand('lunch1')">
+      <div class="stop-index"><div class="idx-num" style="background:rgba(255,126,95,.15);color:var(--accent3)">3</div></div>
+      <div class="stop-body"><div class="stop-name">午餐站 — 雙流</div>
+        <div class="stop-meta"><span class="stop-tag tag-meal">🍽️ 午餐</span><span class="time-chip">🛵 2min</span><span class="time-chip arr">⏰ 11:32抵達</span><span class="time-chip stay">⏱ 停留1h10m</span></div>
+      </div>
+      <div class="stop-actions"><div class="act-btn" style="color:var(--text3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span>展開</span></div></div>
+    </div>
+    <div class="stop-expand" id="lunch1">
+      <div class="option-item"><div class="oi-name">雙流道之驛</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(22.2187,120.7939)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/AESZRS5ftq2NrFcz9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+      <div class="option-item"><div class="oi-name">Vuvu的家（原民風味餐）</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(22.2186,120.7939)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/mntZJdwDKM5xvGXCA')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">景點</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(78,205,196,.14);color:var(--accent)">4</div></div>
+    <div class="stop-body"><div class="stop-name">貝殼美術館</div>
+      <div class="stop-meta"><span class="stop-tag tag-spot">🐚 景點</span><span class="time-chip">🛵 1h</span><span class="time-chip arr">⏰ 13:42抵達</span><span class="time-chip stay">⏱ 停留50分</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(21.9734,120.7542)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/TzRDS4bWKpUZWmjA6')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+
+  <div class="stop-card">
+    <div class="stop-main" onclick="toggleExpand('sp5')">
+      <div class="stop-index"><div class="idx-num" style="background:rgba(78,205,196,.14);color:var(--accent)">5</div></div>
+      <div class="stop-body"><div class="stop-name">救國團墾丁青年活動中心</div>
+        <div class="stop-meta"><span class="stop-tag tag-spot">🏖️ 景點</span><span class="time-chip">🛵 12min</span><span class="time-chip arr">⏰ 14:44抵達</span><span class="time-chip stay">⏱ 停留2h10m</span></div>
+      </div>
+      <div class="stop-actions"><div class="act-btn" style="color:var(--text3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span>展開</span></div></div>
+    </div>
+    <div class="stop-expand" id="sp5">
+      <div class="option-item"><div class="oi-name">救國團墾丁青年活動中心</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(21.9410,120.7994)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/5XreBcun3dNs9HqHA')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+      <div class="option-item"><div class="oi-name">青蛙石海洋遊憩公園（旁）</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(21.9387,120.7995)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/Q6T87T9ZyKvXvRDT9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">晚餐</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(255,126,95,.15);color:var(--accent3)">6</div></div>
+    <div class="stop-body"><div class="stop-name">墾丁大街</div>
+      <div class="stop-meta"><span class="stop-tag tag-meal">🍢 晚餐</span><span class="time-chip">🛵 3min</span><span class="time-chip arr">⏰ 16:57抵達</span><span class="time-chip stay">⏱ 停留1h30m</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(21.9458,120.7971)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/J1FRFR178XA3LqJu9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+</div>
+
+<div class="section">
+  <div class="section-label">住宿</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(247,183,51,.18);color:var(--accent2)">7</div></div>
+    <div class="stop-body"><div class="stop-name">卿卿文旅</div>
+      <div class="stop-meta"><span class="stop-tag tag-stay">🏨 住宿</span><span class="time-chip">🛵 2min</span><span class="time-chip arr">⏰ 18:29抵達</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(21.9462,120.7951)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/vsoVgqAq3XkCqejY9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+</div>
+
+<div class="tips-box">
+  <div class="tips-title">📍 Day1 小提醒</div>
+  <div class="tips-text">全程機車導航已避開高速公路、收費路段與渡輪。雙流森林遊樂區山路彎多請減速慢行；青年活動中心到青蛙石步道需步行，機車可停活動中心停車場。時間為預估值，實際依路況與停留調整。</div>
+</div>
+</div>
+
+<!-- ===== DAY 2 ===== -->
+<div class="day-content" id="day2" style="display:none">
+<div class="route-info">
+  <div class="ri-item"><span class="ri-val">~115km</span>預估里程</div>
+  <div class="ri-item"><span class="ri-val">5 站</span>停靠點</div>
+  <div class="ri-item"><span class="ri-val">11:00離開飯店</span>建議時間</div>
+</div>
+
+<div class="section">
+  <div class="section-label">早餐</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(255,126,95,.15);color:var(--accent3)">1</div></div>
+    <div class="stop-body"><div class="stop-name">木可晨食</div>
+      <div class="stop-meta"><span class="stop-tag tag-meal">🍳 早餐</span><span class="time-chip">🛵 2min</span><span class="time-chip arr">⏰ 11:02抵達</span><span class="time-chip stay">⏱ 停留50分</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(21.9460,120.7962)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/6ToLLEE27qTdCvap9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+</div>
+
+<div class="section">
+  <div class="section-label">景點</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(78,205,196,.14);color:var(--accent)">2</div></div>
+    <div class="stop-body"><div class="stop-name">車城福安宮</div>
+      <div class="stop-meta"><span class="stop-tag tag-spot">🛕 景點</span><span class="time-chip">🛵 30min</span><span class="time-chip arr">⏰ 12:22抵達</span><span class="time-chip stay">⏱ 停留45分</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(22.0709,120.7109)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/CthWZPw2eRdguv7M8')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(78,205,196,.14);color:var(--accent)">3</div></div>
+    <div class="stop-body"><div class="stop-name">透紅佳人夢想樂園</div>
+      <div class="stop-meta"><span class="stop-tag tag-spot">🍎 景點</span><span class="time-chip">🛵 1h10m</span><span class="time-chip arr">⏰ 14:17抵達</span><span class="time-chip stay">⏱ 停留1h</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(22.4128,120.5576)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+      <button class="act-btn map-btn" onclick="openMap('https://maps.app.goo.gl/NzxeRHahXYNKpkhTA')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
+    </div>
+  </div></div>
+
+  <div class="stop-card">
+    <div class="stop-main" onclick="toggleExpand('sp4')">
+      <div class="stop-index"><div class="idx-num" style="background:rgba(78,205,196,.14);color:var(--accent)">4</div></div>
+      <div class="stop-body"><div class="stop-name">佳冬蕭家伙房 ‧ 詩人步道</div>
+        <div class="stop-meta"><span class="stop-tag tag-spot">🏛️ 景點</span><span class="time-chip">🛵 5min</span><span class="time-chip arr">⏰ 15:22抵達</span><span class="time-chip stay">⏱ 停留1h20m</span></div>
+      </div>
+      <div class="stop-actions"><div class="act-btn" style="color:var(--text3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span>展開</span></div></div>
+    </div>
+    <div class="stop-expand" id="sp4">
+      <div class="option-item"><div class="oi-name">佳冬蕭家伙房（蕭屋古厝）</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(22.4179,120.5503)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/XPrCSgCCxAmDiBPF9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+      <div class="option-item"><div class="oi-name">詩人步道（步行即達）</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(22.4180,120.5498)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/p1Q2iYxsY3LMq8S36')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">晚餐（甲板上海景餐廳 / 雙喜牛肉麵店，二選一）</div>
+  <div class="stop-card">
+    <div class="stop-main" onclick="toggleExpand('dinner2')">
+      <div class="stop-index"><div class="idx-num" style="background:rgba(255,126,95,.15);color:var(--accent3)">5</div></div>
+      <div class="stop-body"><div class="stop-name">晚餐站 — 新園</div>
+        <div class="stop-meta"><span class="stop-tag tag-meal">🍜 晚餐</span><span class="time-chip">🛵 30min</span><span class="time-chip arr">⏰ 17:12抵達</span><span class="time-chip stay">⏱ 停留1h30m</span></div>
+      </div>
+      <div class="stop-actions"><div class="act-btn" style="color:var(--text3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span>展開</span></div></div>
+    </div>
+    <div class="stop-expand" id="dinner2">
+      <div class="option-item"><div class="oi-name">甲板上海景餐廳（15:00開始營業，週二公休）</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(22.4710,120.4378)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/6vKPngQCkfa9U58e9')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+      <div class="option-item"><div class="oi-name">雙喜牛肉麵店</div><div class="oi-actions">
+        <div class="oi-btn" onclick="navTo(22.4808,120.4424)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="oi-btn" onclick="openMap('https://maps.app.goo.gl/tnZXmtAhmVQjFSCt7')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">回家</div>
+  <div class="stop-card"><div class="stop-main">
+    <div class="stop-index"><div class="idx-num" style="background:rgba(46,204,113,.14);color:var(--green)">6</div></div>
+    <div class="stop-body"><div class="stop-name">回五甲</div>
+      <div class="stop-meta"><span class="stop-tag tag-home">🏠 Home</span><span class="time-chip">🛵 33min</span><span class="time-chip arr">⏰ 19:15抵達</span></div>
+    </div>
+    <div class="stop-actions">
+      <button class="act-btn nav-btn" onclick="navTo(22.6128,120.3375)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>導航</span></button>
+    </div>
+  </div></div>
+</div>
+
+<div class="tips-box">
+  <div class="tips-title">📍 Day2 小提醒</div>
+  <div class="tips-text">11:00離開卿卿文旅後直接前往木可晨食吃早午餐。全程機車導航已避開高速公路、收費路段與渡輪。車城到佳冬走台1線沿海路段直接，途中可在枋寮加油。甲板上海景餐廳週二公休、下午3點才開始營業，17:12抵達剛好；若提早到可先繞去雙喜牛肉麵店。時間為預估值，請依實際路況調整。</div>
+</div>
+</div>
+
+<!-- Overview -->
+<div class="overview-panel" id="overviewPanel">
+  <div class="ov-card"><h3>行程總覽</h3><p>兩天一夜白牌機車旅行，從高雄五甲出發南下墾丁，隔日北返途經車城福安宮、佳冬蕭家伙房，回到五甲。全程走省道，不上高速、不走收費路段，也無需搭渡輪。</p></div>
+  <div class="ov-card"><h3>DAY 1 路線</h3><p>五甲 → 海豚灣（早餐）→ 雙流國家森林遊樂區 → 雙流道之驛／Vuvu的家（午餐）→ 貝殼美術館 → 救國團墾丁青年活動中心／青蛙石 → 墾丁大街（晚餐）→ 卿卿文旅（住宿）</p></div>
+  <div class="ov-card"><h3>DAY 2 路線</h3><p>11:00 離開卿卿文旅 → 木可晨食（早餐）→ 車城福安宮 → 透紅佳人夢想樂園 → 佳冬蕭家伙房／詩人步道 → 甲板上海景餐廳／雙喜牛肉麵店（晚餐）→ 回五甲，預計19:15到家</p></div>
+  <div class="ov-card"><h3>注意事項</h3><p>所有導航已設定機車模式（two-wheeler），自動避開高速公路、收費站與渡輪。抵達時間與停留時間皆為預估值，請依實際天候、路況與遊玩節奏彈性調整。建議出發前加滿油，恆春到雙流、佳冬到新園路段加油站較少。</p></div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="bnav-item active" id="navTrip" onclick="showPanel('trip')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>行程</span>
+  </div>
+  <div class="bnav-item" id="navOverview" onclick="showPanel('overview')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>總覽</span>
+  </div>
+</nav>
+
+<script>
+function navTo(lat, lng) {
+  const dest = `${lat},${lng}`;
+  const ua = navigator.userAgent || '';
+  const isAndroid = /android/i.test(ua);
+  const isIOS = /iphone|ipad|ipod/i.test(ua);
+  if (isAndroid) {
+    window.location.href = `google.navigation:q=${dest}&mode=two-wheeler&avoid=highways|tolls|ferries`;
+    setTimeout(() => { window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=two-wheeler&dirflg=h`, '_blank', 'noopener'); }, 800);
+  } else if (isIOS) {
+    window.location.href = `comgooglemaps://?daddr=${dest}&directionsmode=driving&avoid=highways|tolls|ferries`;
+    setTimeout(() => { window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=two-wheeler&dirflg=h`, '_blank', 'noopener'); }, 800);
+  } else {
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=two-wheeler&dirflg=h`, '_blank', 'noopener');
+  }
+}
+function openMap(shortUrl) { window.open(shortUrl, '_blank', 'noopener'); }
+function switchDay(n) {
+  document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === n - 1));
+  document.getElementById('day1').style.display = n === 1 ? 'block' : 'none';
+  document.getElementById('day2').style.display = n === 2 ? 'block' : 'none';
+  document.getElementById('overviewPanel').classList.remove('show');
+  document.getElementById('dayTabs').style.display = 'flex';
+  updateNavActive('navTrip');
+}
+function toggleExpand(id) { document.getElementById(id).classList.toggle('show'); }
+function showPanel(panel) {
+  const dayTabs = document.getElementById('dayTabs');
+  const day1 = document.getElementById('day1'), day2 = document.getElementById('day2');
+  const ov = document.getElementById('overviewPanel');
+  if (panel === 'trip') {
+    dayTabs.style.display = 'flex'; ov.classList.remove('show');
+    const idx = [...document.querySelectorAll('.day-tab')].indexOf(document.querySelector('.day-tab.active'));
+    day1.style.display = idx === 0 ? 'block' : 'none';
+    day2.style.display = idx === 1 ? 'block' : 'none';
+    updateNavActive('navTrip');
+  } else if (panel === 'overview') {
+    dayTabs.style.display = 'none'; day1.style.display = 'none'; day2.style.display = 'none';
+    ov.classList.add('show'); updateNavActive('navOverview');
+  }
+}
+function updateNavActive(id) {
+  document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>

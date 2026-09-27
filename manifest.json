@@ -1,0 +1,26 @@
+{
+  "name": "五甲→墾丁 福安宮之旅",
+  "short_name": "墾丁之旅",
+  "description": "白牌機車 2天1夜行程導航 App",
+  "lang": "zh-TW",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1622",
+  "theme_color": "#0d1b2a",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
